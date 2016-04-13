@@ -1,0 +1,13 @@
+.centerText {
+    text-align: center;
+}
+
+.addCard {
+    float: right;
+}
+
+.acceptSideDeckButton {
+    text-align: center;
+    margin-top: 8px;
+    margin-bottom: 5px;
+}
