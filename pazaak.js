@@ -8,7 +8,7 @@ angular
         $scope.playerSideDeck = [];
         $scope.playerMainDeck = [];
         $scope.playerCounter = 0;
-        var playerStand = false;
+        $scope.playerStand = false;
 
         $scope.opponentSideDeck = createOpponentSideDeck();
         $scope.opponentMainDeck = [];
@@ -195,8 +195,8 @@ angular
             main();
         };
 
-        $scope.playerStand = function () {
-            playerStand = true;
+        $scope.playerStandFunction = function () {
+            $scope.playerStand = true;
 
         };
 
@@ -259,60 +259,62 @@ angular
         }
 
         function opponentTurn () {
-            var check = $scope.opponentChoose();
+            if (opponentStand === false) {
+                var check = $scope.opponentChoose();
 
-            if (opponentApproach === 'small risk') {
-                if ($scope.opponentCounter <= 12) {
-                    if (check === null) {
+                if (opponentApproach === 'small risk') {
+                    if ($scope.opponentCounter <= 12) {
+                        if (check === null) {
+                            $scope.opponentHit();
+                        } else {
+                            $scope.opponentCounter += check.value;
+                            $scope.opponentMainDeck.push(check);
+                            $scope.opponentStand();
+                        }
+                    } else if ($scope.opponentCounter > 20) {
+                        if (check) {
+                            $scope.opponentCounter -= check.value;
+                            $scope.opponentMainDeck.push(check);
+                            $scope.opponentStand();
+                        }
+                    } else if ($scope.opponentCounter >= 13 && $scope.opponentCounter <= 19) {
+                        if (check) {
+                            $scope.opponentCounter += check.value;
+                            $scope.opponentMainDeck.push(check);
+                            $scope.opponentStand();
+                        }
+                    }
+                } else if (opponentApproach === 'medium risk') {
+                    if ($scope.opponentCounter <= 16) {
+                        if (check === null) {
+                            $scope.opponentHit();
+                        } else {
+                            $scope.opponentCounter += check.value;
+                            $scope.opponentMainDeck.push(check);
+                            $scope.opponentStand();
+                        }
+                    } else if ($scope.opponentCounter > 20) {
+                        if (check) {
+                            $scope.opponentCounter -= check.value;
+                            $scope.opponentMainDeck.push(check);
+                            $scope.opponentStand();
+                        }
+                    } else if ($scope.opponentCounter >= 17 && $scope.opponentCounter <= 19) {
+                        if (check) {
+                            $scope.opponentCounter += check.value;
+                            $scope.opponentMainDeck.push(check);
+                            $scope.opponentStand();
+                        }
+                    }
+                } else if (opponentApproach === 'large risk') {
+                    if ($scope.opponentCounter <= 19) {
                         $scope.opponentHit();
-                    } else {
-                        $scope.opponentCounter += check.value;
-                        $scope.opponentMainDeck.push(check);
-                        $scope.opponentStand();
-                    }
-                } else if ($scope.opponentCounter > 20) {
-                    if (check) {
-                        $scope.opponentCounter -= check.value;
-                        $scope.opponentMainDeck.push(check);
-                        $scope.opponentStand();
-                    }
-                } else if ($scope.opponentCounter >= 13 && $scope.opponentCounter <= 19) {
-                    if (check) {
-                        $scope.opponentCounter += check.value;
-                        $scope.opponentMainDeck.push(check);
-                        $scope.opponentStand();
-                    }
-                }
-            } else if (opponentApproach === 'medium risk') {
-                if ($scope.opponentCounter <= 16) {
-                    if (check === null) {
-                        $scope.opponentHit();
-                    } else {
-                        $scope.opponentCounter += check.value;
-                        $scope.opponentMainDeck.push(check);
-                        $scope.opponentStand();
-                    }
-                } else if ($scope.opponentCounter > 20) {
-                    if (check) {
-                        $scope.opponentCounter -= check.value;
-                        $scope.opponentMainDeck.push(check);
-                        $scope.opponentStand();
-                    }
-                } else if ($scope.opponentCounter >= 17 && $scope.opponentCounter <= 19) {
-                    if (check) {
-                        $scope.opponentCounter += check.value;
-                        $scope.opponentMainDeck.push(check);
-                        $scope.opponentStand();
-                    }
-                }
-            } else if (opponentApproach === 'large risk') {
-                if ($scope.opponentCounter <= 19) {
-                    $scope.opponentHit();
-                } else if ($scope.opponentCounter > 20) {
-                    if (check) {
-                        $scope.opponentCounter -= check.value;
-                        $scope.opponentMainDeck.push(check);
-                        $scope.opponentStand();
+                    } else if ($scope.opponentCounter > 20) {
+                        if (check) {
+                            $scope.opponentCounter -= check.value;
+                            $scope.opponentMainDeck.push(check);
+                            $scope.opponentStand();
+                        }
                     }
                 }
             }
