@@ -2,12 +2,11 @@
     text-align: center;
 }
 
-.addCard {
+.floatRight {
     float: right;
 }
 
 .acceptSideDeckButton {
-    text-align: center;
-    margin-top: 8px;
+    margin-top: 9px;
     margin-bottom: 5px;
 }

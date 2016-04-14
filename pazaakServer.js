@@ -1,13 +1,11 @@
-function () {
-    var express = require('express');
-    var application = express();
+var express = require('express');
+var application = express();
 
-    var port = process.env.PORT || 8000;
+var port = process.env.PORT || 8000;
 
-    application.set('view engine', 'ejs');
-    application.use(express.static(__dirname));
+application.set('view engine', 'ejs');
+application.use(express.static(__dirname));
 
-    application.listen(port, function () {
-        console.log('Pazaak is running on port ' + port);
-    });
-}();
+application.listen(port, function () {
+    console.log('Pazaak is running on port ' + port);
+});
