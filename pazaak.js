@@ -8,13 +8,17 @@ angular
         $scope.playerSideDeck = [];
         $scope.playerMainDeck = [];
         $scope.playerCounter = 0;
+        $scope.playerWins = 0;
         $scope.playerStand = false;
+        var playerDanger = 'off';
 
         $scope.opponentSideDeck = createOpponentSideDeck();
         $scope.opponentMainDeck = [];
         $scope.opponentCounter = 0;
-        var opponentApproach = riskGenerator();
+        $scope.opponentWins = 0;
         var opponentStand = false;
+        var opponentApproach = riskGenerator();
+        var opponentDanger = 'off';
 
         $scope.secondStage = false;
 
@@ -192,12 +196,15 @@ angular
             var temp = $scope.combinedMainDeck.pop();
             $scope.playerCounter += temp.value;
             $scope.playerMainDeck.push(temp);
-            main();
+            continueGame();
         };
 
         $scope.playerStandFunction = function () {
+            if ($scope.playerCounter > 20) {
+                $scope.playerDanger = 'dead';
+            }
             $scope.playerStand = true;
-
+            continueGame();
         };
 
         $scope.playerChoose = function () {
@@ -219,10 +226,15 @@ angular
             var temp = $scope.combinedMainDeck.pop();
             $scope.opponentCounter += temp.value;
             $scope.opponentMainDeck.push(temp);
+            checkPoints();
         }
 
         $scope.opponentStand = function () {
+            if ($scope.opponentCounter > 20) {
+                $scope.opponentDanger = 'dead';
+            }
             opponentStand = true;
+            continueGame();
         }
 
         $scope.opponentChoose = function () {
@@ -320,12 +332,93 @@ angular
             }
         }
 
-        function checkPoints () {
-
+        function dangerSwitch (level, change) {
+            if (change === '+') {
+                if (level === 'off') {
+                    return 'on';
+                } else if (level === 'on') {
+                    return 'dead';
+                }
+            } else if (change === '-') {
+                if (level === 'on') {
+                    return 'off';
+                } else if (level === 'off') {
+                    return 'off';
+                }
+            }
         }
 
-        function main () {
-            opponentTurn();
+        function checkPoints () {
+            var tiebreaker = false;
+
+            if ($scope.playerCounter > 20) {
+                playerDanger = dangerSwitch(playerDanger, '+');
+                if (playerDanger === 'dead') {
+                    $scope.opponentStand();
+                    $scope.playerStandFunction();
+                    $scope.opponentWins++;
+                }
+            } else if ($scope.opponentCounter > 20) {
+                opponentDanger = dangerSwitch(opponentDanger, '+');
+                if (playerDanger === 'dead') {
+                    $scope.opponentStand();
+                    $scope.playerStandFunction();
+                    $scope.playerWins++;
+                }
+            } else if ($scope.opponentCounter === 20 && $scope.playerCounter === 20) {
+                for (var i = 0; i < $scope.playerMainDeck.length; i++) {
+                    if ($scope.playerMainDeck[i].id === 'Tiebreaker (+/- 1)') {
+                        tiebreaker = true;
+                    }
+                }
+
+                if (tiebreaker) {
+                    $scope.playerWins++;
+                }
+
+                $scope.opponentStand();
+                $scope.playerStandFunction();
+            } else {
+                if ($scope.playerCounter === 20) {
+                    $scope.playerStandFunction();
+                    continueGame();
+                } else if ($scope.opponentCounter === 20) {
+                    $scope.opponentStand();
+                } else if ($scope.playerStand && opponentStand) {
+                    if ($scope.playerCounter > $scope.opponentCounter) {
+                        $scope.playerWins++;
+                    } else if ($scope.playerCounter < $scope.opponentCounter) {
+                        $scope.opponentWins++;
+                    } else if ($scope.playerCounter === $scope.opponentCounter) {
+                        for (var i = 0; i < $scope.playerMainDeck.length; i++) {
+                            if ($scope.playerMainDeck[i].id === 'Tiebreaker (+/- 1)') {
+                                tiebreaker = true;
+                            }
+                        }
+
+                        if (tiebreaker) {
+                            $scope.playerWins++;
+                        }
+                    }
+                } else {
+                    if ($scope.playerCounter < 20) {
+                        playerDanger = dangerSwitch(playerDanger, '-');
+                    }
+
+                    if ($scope.opponentCounter < 20) {
+                        opponentDanger = dangerSwitch(opponentDanger, '-');
+                    }
+                }
+            }
+        }
+
+        function continueGame () {
+            setTimeout(function () {
+                checkPoints();
+            });
+            if (playerDanger === 'off') {
+                opponentTurn();
+            }
         }
 
     });
